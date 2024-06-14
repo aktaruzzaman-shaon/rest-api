@@ -1,10 +1,13 @@
 import connect from "@/app/lib/db";
+import Category from "@/app/lib/models/category";
+import User from "@/app/lib/models/user";
 import { Types } from "mongoose";
 import { NextResponse } from "next/server"
 
 
-export const PATCH = async (request) => {
+export const PATCH = async (request, context) => {
     const categoryId = context.params.category;
+    console.log(context.params)
     try {
         const body = await request.json();
         const { title } = body;
@@ -16,9 +19,33 @@ export const PATCH = async (request) => {
             return new NextResponse({ message: "Invalid or missing userId" }, { status: 400 })
         }
 
-        if (!categoryId || !Types.ObjectId.isValid(categoryId))
+        if (!categoryId || !Types.ObjectId.isValid(categoryId)) {
+            return new NextResponse(JSON.stringify({ message: "Invalid or missing categoryid" }, { status: 400 }))
+        }
 
         await connect()
+
+        const user = await User.findById(userId)
+
+        if (!user) {
+            return new NextResponse(JSON.stringify({ message: "User not found" }, { status: 404 }))
+        }
+
+        const category = await Category.findOne({ _id: categoryId, user: userId })
+
+        if (!category) {
+            return new NextResponse(
+                JSON.stringify({ message: "Category not found" }, { status: 404 })
+            )
+        }
+
+        const udpatedCategory = await Category.findByIdAndUpdate(
+            categoryId,
+            { title },
+            { new: true }
+        )
+
+        return new NextResponse(JSON.stringify({ message: "Category is updated", category: udpatedCategory }, { status: 200 }))
 
     } catch (error) {
         return new NextResponse("Error in updating category" + error.message, { status: 500 })
