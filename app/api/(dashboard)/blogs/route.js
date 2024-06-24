@@ -90,9 +90,15 @@ export const POST = async (request) => {
         const newBlog = new Blog({
             title,
             description,
-            user: new Types.ObjectId(userId), 
-            categoryId: new Types.ObjectId(categoryId)
+            user: new Types.ObjectId(userId),
+            category: new Types.ObjectId(categoryId)
         })
+
+        await newBlog.save()
+
+        return new NextResponse(
+            JSON.stringify({ message: "Blog is created" }), { status: 200 }
+        )
 
     } catch (error) {
         return new NextResponse("Errror in fetching blogs" + error.message, {
