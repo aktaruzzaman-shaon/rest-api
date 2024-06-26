@@ -59,6 +59,7 @@ export const GET = async (request, context) => {
 
 export const PATCH = async (request, context) => {
     const blogId = context.params.blog;
+    console.log(blogId, "blogId")
 
     try {
         const body = await request.json();
@@ -66,6 +67,7 @@ export const PATCH = async (request, context) => {
 
         const { searchParams } = new URL(request.url)
         const userId = searchParams.get("userId")
+
 
         if (!userId || !Types.ObjectId.isValid(userId)) {
             return new NextResponse({ message: "Invalid or missing userId" }, { status: 400 })
@@ -76,6 +78,7 @@ export const PATCH = async (request, context) => {
                 JSON.stringify({ message: "Invalid or missing blogId" }, { status: 400 })
             )
         }
+
 
         await connect()
 
@@ -113,14 +116,16 @@ export const DELETE = async (request, context) => {
     try {
         const { searchParams } = new URL(request.url)
         const userId = searchParams.get("userId")
-
-        if (!userId || Types.ObjectId.isValid(userId)) {
+        
+        if (!userId || !Types.ObjectId.isValid(userId)) {
             return new NextResponse({ message: "Invalid userId" }, { status: 400 })
         }
+        console.log(userId,"userId")
 
-        if (!blogId || Types.ObjectId.isValid(blogId)) {
+        if (!blogId || !Types.ObjectId.isValid(blogId)) {
             return new NextResponse({ message: "Invalid blogId" }, { status: 400 })
         }
+        
 
         console.log(blogId, userId, "hwllo")
 
