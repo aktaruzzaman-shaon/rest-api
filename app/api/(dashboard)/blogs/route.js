@@ -5,7 +5,6 @@ import User from "@/app/lib/models/user";
 import { Types } from "mongoose";
 import { NextResponse } from "next/server"
 
-
 export const GET = async (request) => {
     try {
         const { searchParams } = new URL(request.url)
